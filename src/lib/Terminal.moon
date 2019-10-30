@@ -49,11 +49,11 @@ class Terminal
     switch key
       when "up"
         @display = @display\sub 1, -(#@input + 1)
-        @input = @actions\back!
+        @input = @actions\back(@input)
         @display ..= @input
       when "down"
         @display = @display\sub 1, -(#@input + 1)
-        @input = @actions\foreward!
+        @input = @actions\foreward(@input)
         @display ..= @input
       when "return"
         @keysHeld[key] = 0
@@ -69,7 +69,8 @@ class Terminal
           @display = @display\sub 1, -2
       -- when "delete"
       else
-        print key -- TEMP
+        unless keyConstants.character[key]
+          print key -- TEMP
 
   keyreleased: (key) =>
     @keysHeld[key] = nil

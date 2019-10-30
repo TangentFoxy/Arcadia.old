@@ -5,18 +5,16 @@ class History
 
   add: (input) =>
     if #input > 0
-      new = #@           -- new index will be at end
-      if #@[#@] != 0     -- if end is occupied, we will need to increment
-        if @index == new --   if our index is at the end
-          @index += 1    --     increment our index
-        new += 1
+      @[#@] = input  -- place at end
+      @[#@ + 1] = "" -- create new empty space
+      @index = #@    -- set index to new space
 
-      @[new] = input
-
-  back: () =>
+  back: (input) =>
+    @[#@] = input -- whatever was being edited stays available at end of history
     @index = math.max @index - 1, 1
     return @[@index]
 
-  foreward: () =>
+  foreward: (input) =>
+    @[#@] = input -- whatever was being edited stays available at end of history
     @index = math.min @index + 1, #@
     return @[@index]

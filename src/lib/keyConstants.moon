@@ -1,4 +1,4 @@
-KeyConstants = {
+keyConstants = {
   character: {
     space: true -- 0.10+ version of space
   }
@@ -67,14 +67,14 @@ KeyConstants = {
 -- note: space character included for pre-0.10 versions
 character = "abcdefghijklmnopqrstuvwxyz0123456789 !\"#$&'()*+,-./:;<=>?@[\\]^_`"
 for i = 1, #character
-  KeyConstants.character[character\sub i, i] = true
+  keyConstants.character[character\sub i, i] = true
 
 numpad = "0123456789.,/*-+="
 for i = 1, #numpad
-  KeyConstants.numpad["kp#{numpad\sub i, i}"] = true
+  keyConstants.numpad["kp#{numpad\sub i, i}"] = true
 
 -- function keys
 for i = 1, 18
-  KeyConstants["function"]["f#{i}"] = true
+  keyConstants["function"]["f#{i}"] = true
 
-return KeyConstants
+return keyConstants
