@@ -4,6 +4,8 @@ keyConstants = require "lib.keyConstants"
 History = require "lib.History"
 
 font = graphics.newFont "fonts/VeraMono.ttf", 15
+width = graphics.getWidth!
+
 lineHeight = font\getHeight!
 lineCount = math.floor graphics.getHeight! / lineHeight
 
@@ -20,14 +22,17 @@ class Terminal
     @actions = History!
     @input = ""
 
-  update: (dt) =>
-    -- remove text scrolled off-screen
-    -- TODO consider moving this to something updated every time display is updated
+  write: (text) =>
+    @display ..= text
+    if text != "\n"
+      _, lines = font\getWrap(@display, width)
+      @display = table.concat lines, "\n"
     historyCount = 1 + select 2, @display\gsub "\n", "\n"
     if historyCount > lineCount
       first_eol = @display\find "\n"
       @display = @display\sub first_eol + 1
 
+  update: (dt) =>
     -- handle key repetition
     for key, time in pairs @keysHeld
       time += dt
@@ -39,10 +44,9 @@ class Terminal
   draw: =>
     graphics.setFont font
     graphics.print @display
-    -- graphics.printf @display, 0, 0, love.graphics.getWidth!
 
   textinput: (text) =>
-    @display ..= text
+    @write text
     @input ..= text
 
   keypressed: (key) =>
@@ -50,22 +54,23 @@ class Terminal
       when "up"
         @display = @display\sub 1, -(#@input + 1)
         @input = @actions\back(@input)
-        @display ..= @input
+        @write(@input)
       when "down"
         @display = @display\sub 1, -(#@input + 1)
         @input = @actions\foreward(@input)
-        @display ..= @input
+        @write(@input)
       when "return"
         @keysHeld[key] = 0
-        @display ..= "\n"
+        @write("\n")
         @actions\add(@input)
         print(@input) -- TODO do something to run it
-        @display ..= "> "
+        @write("> ")
         @input = ""
       when "backspace"
         @keysHeld[key] = 0
         if #@input > 0
-          @input = @input\sub 1, -2
+          if @display\sub(-1) != "\n"
+            @input = @input\sub 1, -2
           @display = @display\sub 1, -2
       -- when "delete"
       else
