@@ -3,7 +3,7 @@ import graphics from love
 keyConstants = require "lib.keyConstants"
 initialVessels = require "initialVessels"
 VesselManager = require "lib.VesselManager"
-Parser = require "Parser"
+Parser = require "lib.Parser"
 History = require "lib.History"
 
 font = graphics.newFont "fonts/VeraMono.ttf", 15
