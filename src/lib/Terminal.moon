@@ -1,10 +1,14 @@
 import graphics from love
 
 keyConstants = require "lib.keyConstants"
+History = require "lib.History"
 
-font = graphics.newFont "fonts/VeraMono.ttf", 13
+font = graphics.newFont "fonts/VeraMono.ttf", 15
 lineHeight = font\getHeight!
 lineCount = math.floor graphics.getHeight! / lineHeight
+
+characterWidth = font\getWidth " "
+lineWidth = math.floor love.graphics.getWidth! / characterWidth
 
 keyRepeatThreshold = 0.5
 keyRepeatInterval = 0.03
@@ -13,11 +17,12 @@ class Terminal
   new: =>
     @display = "> "
     @keysHeld = {}
-    @command_history = {""}
-    @current_command = 1
+    @actions = History!
+    @input = ""
 
   update: (dt) =>
     -- remove text scrolled off-screen
+    -- TODO consider moving this to something updated every time display is updated
     historyCount = 1 + select 2, @display\gsub "\n", "\n"
     if historyCount > lineCount
       first_eol = @display\find "\n"
@@ -33,35 +38,34 @@ class Terminal
 
   draw: =>
     graphics.setFont font
-    graphics.print @display, 1, -1
+    graphics.print @display
+    -- graphics.printf @display, 0, 0, love.graphics.getWidth!
 
   textinput: (text) =>
     @display ..= text
-    @command_history[@current_command] ..= text
+    @input ..= text
 
   keypressed: (key) =>
     switch key
       when "up"
-        @display = @display\sub 1, -(#@command_history[@current_command] + 1)
-        @current_command = math.max @current_command - 1, 1
-        @display ..= @command_history[@current_command]
+        @display = @display\sub 1, -(#@input + 1)
+        @input = @actions\back!
+        @display ..= @input
       when "down"
-        @display = @display\sub 1, -(#@command_history[@current_command] + 1)
-        @current_command = math.min @current_command + 1, #@command_history
-        @display ..= @command_history[@current_command]
+        @display = @display\sub 1, -(#@input + 1)
+        @input = @actions\foreward!
+        @display ..= @input
       when "return"
         @keysHeld[key] = 0
         @display ..= "\n"
-        print(@command_history[@current_command]) -- TODO do something to run it
+        @actions\add(@input)
+        print(@input) -- TODO do something to run it
         @display ..= "> "
-        @current_command = #@command_history
-        if #@command_history[@current_command] > 0
-          @current_command += 1
-          @command_history[@current_command] = ""
+        @input = ""
       when "backspace"
         @keysHeld[key] = 0
-        if #@command_history[@current_command] > 0
-          @command_history[@current_command] = @command_history[@current_command]\sub 1, -2
+        if #@input > 0
+          @input = @input\sub 1, -2
           @display = @display\sub 1, -2
       -- when "delete"
       else
