@@ -1,6 +1,9 @@
 import graphics from love
 
 keyConstants = require "lib.keyConstants"
+initialVessels = require "initialVessels"
+VesselManager = require "lib.VesselManager"
+Parser = require "Parser"
 History = require "lib.History"
 
 font = graphics.newFont "fonts/VeraMono.ttf", 15
@@ -15,94 +18,12 @@ lineWidth = math.floor love.graphics.getWidth! / characterWidth
 keyRepeatThreshold = 0.5
 keyRepeatInterval = 0.03
 
-vessels = {
-  {
-    name: "library"
-    owners: {true, true}
-    parent: 1
-  }
-  {
-    name: "ghost"
-    owners: {true, true}
-    parent: 1
-    note: "Well, well, hello there."
-  }
-  {
-    name: "map"
-    owners: {true, true}
-    parent: 2
-    note: "A basic map"
-  }
-}
-
-indices: {
-  children: {} -- index is parent id, is an object, a hashmap of ids of children
-}
-for i = 1, #vessels
-  vessel = vessels[i]
-  parent = vessel.parent
-  children = indices.children
-  if children[parent]
-    children[parent][i] = true
-  else
-    children[parent] = { [i]: true }
-
-possessed = 2
-
-actions = {
-  look: (args, @) ->
-    @write "\nNot implemented."
-  create: (args, @) ->
-    @write "\nNot implemented."
-  become: (args, @) ->
-    @write "\nNot implemented."
-  enter: (args, @) ->
-    @write "\nNot implemented."
-  leave: (args, @) ->
-    @write "\nNot implemented."
-  warp: (args, @) ->
-    @write "\nNot implemented."
-  take: (args, @) ->
-    @write "\nNot implemented."
-  drop: (args, @) ->
-    @write "\nNot implemented."
-  inventory: (args, @) ->
-    @write "\nNot implemented."
-  move: (args, @) ->
-    @write "\nNot implemented."
-  learn: (args, @) ->
-    @write "\nNot implemented."
-  note: (args, @) ->
-    @write "\nNot implemented."
-  transform: (args, @) ->
-    @write "\nNot implemented."
-  inspect: (args, @) ->
-    @write "\nNot implemented."
-  trigger: (args, @) ->
-    @write "\nNot implemented."
-  program: (args, @) ->
-    @write "\nNot implemented."
-  use: (args, @) ->
-    @write "\nNot implemented."
-  cast: (args, @) ->
-    @write "\nNot implemented."
-  echo: (args, @) ->
-    @write "\nNot implemented."
-}
-
-run = (input, @) ->
-  index = input\find(" ") or #input + 1
-  action = input\sub 1, index - 1
-  if actions[action]
-    actions[action](input\sub(index + 1), @)
-  else
-    @write "\nYou cannot '#{action}' here. (Need help? Try 'help' or 'learn')"
-
 class Terminal
   new: =>
     @display = "> "
     @keysHeld = {}
-    @actions = History!
+    @parser = Parser(VesselManager(unpack initialVessels))
+    @history = History!
     @input = ""
 
   write: (text) =>
@@ -136,16 +57,16 @@ class Terminal
     switch key
       when "up"
         @display = @display\sub 1, -(#@input + 1)
-        @input = @actions\back(@input)
+        @input = @history\back(@input)
         @write(@input)
       when "down"
         @display = @display\sub 1, -(#@input + 1)
-        @input = @actions\foreward(@input)
+        @input = @history\foreward(@input)
         @write(@input)
       when "return"
         @keysHeld[key] = 0
-        @actions\add(@input)
-        run(@input, @)
+        @history\add(@input)
+        @write(@parser\act(@input))
         @write("\n> ")
         @input = ""
       when "backspace"
