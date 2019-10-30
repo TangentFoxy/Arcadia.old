@@ -15,6 +15,75 @@ lineWidth = math.floor love.graphics.getWidth! / characterWidth
 keyRepeatThreshold = 0.5
 keyRepeatInterval = 0.03
 
+vessels = {
+  {
+    name: "library"
+    owners: {1}
+    parent: 1
+  }
+  {
+    name: "ghost"
+    owners: {true}
+    parent: 1
+    note: "Well, well, hello there."
+  }
+  {
+    name: "map"
+    owners: {true, true}
+    parent: 2
+    note: "A basic map"
+  }
+}
+
+actions = {
+  look: (args, @) ->
+    @write "\nNot implemented."
+  create: (args, @) ->
+    @write "\nNot implemented."
+  become: (args, @) ->
+    @write "\nNot implemented."
+  enter: (args, @) ->
+    @write "\nNot implemented."
+  leave: (args, @) ->
+    @write "\nNot implemented."
+  warp: (args, @) ->
+    @write "\nNot implemented."
+  take: (args, @) ->
+    @write "\nNot implemented."
+  drop: (args, @) ->
+    @write "\nNot implemented."
+  inventory: (args, @) ->
+    @write "\nNot implemented."
+  move: (args, @) ->
+    @write "\nNot implemented."
+  learn: (args, @) ->
+    @write "\nNot implemented."
+  note: (args, @) ->
+    @write "\nNot implemented."
+  transform: (args, @) ->
+    @write "\nNot implemented."
+  inspect: (args, @) ->
+    @write "\nNot implemented."
+  trigger: (args, @) ->
+    @write "\nNot implemented."
+  program: (args, @) ->
+    @write "\nNot implemented."
+  use: (args, @) ->
+    @write "\nNot implemented."
+  cast: (args, @) ->
+    @write "\nNot implemented."
+  echo: (args, @) ->
+    @write "\nNot implemented."
+}
+
+run = (input, @) ->
+  index = input\find(" ") or #input + 1
+  action = input\sub 1, index - 1
+  if actions[action]
+    actions[action](input\sub(index + 1), @)
+  else
+    @write "\nYou cannot '#{action}' here. (Need help? Try 'help' or 'learn')"
+
 class Terminal
   new: =>
     @display = "> "
@@ -61,10 +130,9 @@ class Terminal
         @write(@input)
       when "return"
         @keysHeld[key] = 0
-        @write("\n")
         @actions\add(@input)
-        print(@input) -- TODO do something to run it
-        @write("> ")
+        run(@input, @)
+        @write("\n> ")
         @input = ""
       when "backspace"
         @keysHeld[key] = 0
