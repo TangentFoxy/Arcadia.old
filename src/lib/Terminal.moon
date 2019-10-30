@@ -35,6 +35,20 @@ vessels = {
   }
 }
 
+indices: {
+  children: {} -- index is parent id, is an object, a hashmap of ids of children
+}
+for i = 1, #vessels
+  vessel = vessels[i]
+  parent = vessel.parent
+  children = indices.children
+  if children[parent]
+    children[parent][i] = true
+  else
+    children[parent] = { [i]: true }
+
+possessed = 2
+
 actions = {
   look: (args, @) ->
     @write "\nNot implemented."
