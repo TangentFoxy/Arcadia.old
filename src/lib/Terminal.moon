@@ -18,12 +18,12 @@ keyRepeatInterval = 0.03
 vessels = {
   {
     name: "library"
-    owners: {1}
+    owners: {true, true}
     parent: 1
   }
   {
     name: "ghost"
-    owners: {true}
+    owners: {true, true}
     parent: 1
     note: "Well, well, hello there."
   }
