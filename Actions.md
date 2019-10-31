@@ -35,7 +35,7 @@ vessel, and the second vessel is the target vessel.
 
 ## Creation
 
-- Create [a/an/the/any] vessel
+- Create [a/an/the] vessel
   Create a new vessel in your parent vessel.
 - Clone [a/an/the/any] vessel [in] [vessel] | [as] [vessel]
   Clone a sibling vessel.
