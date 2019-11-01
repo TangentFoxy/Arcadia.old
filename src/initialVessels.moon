@@ -21,9 +21,10 @@ vessels = {
   }
 }
 
-possessed = 2
-
-return {
-  vessels,
-  possessed
+save = {
+  possessed: 2
+  permissions: { [2]: true }
+  nextID: 4
 }
+
+return { vessels, :save }

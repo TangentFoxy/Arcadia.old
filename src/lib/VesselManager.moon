@@ -38,7 +38,7 @@ parseName = (input, enable={}) ->
   return { :any, :attribute, :name, :id }
 
 class VesselManager
-  new: (vessels, possessed, nextID) =>
+  new: (vessels, save={}) =>
     @vessels = vessels or {
       {
         name: "void"
@@ -47,8 +47,9 @@ class VesselManager
         creator: "void"
       }
     }
-    @possessed = @vessels[possessed] or @vessels[1]
-    @nextID = nextID or #@vessels + 1
+    @possessed = save.possessed and @vessels[save.possessed] or @vessels[1]
+    @permissions = save.permissions or { [@possessed.id]: true }
+    @nextID = save.nextID or #@vessels + 1
 
     @indices = {
       children: {} -- hashmap: parent id = hashmap: child id = true

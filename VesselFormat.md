@@ -18,5 +18,5 @@ vessels = {
 }
 ```
 
-In addition to the vessels, a `nextID` must be stored, and the ID of the
-currently possessed vessel.
+In addition to the vessels, a `nextID` must be stored, the ID of the currently
+possessed vessel, and a hashmap of previously possessed vessels.
